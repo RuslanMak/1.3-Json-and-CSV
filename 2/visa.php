@@ -8,7 +8,7 @@
  
   <form method="post">
       <fieldset>
-          <p>Затраты дня</p>
+          <p>Выберите страну</p>
               <input type="text" name="country" required>
               <input type="submit" name="countries" value="Получить">
       </fieldset>
@@ -19,7 +19,7 @@
 
       $country = $_POST['country'];
       
-      $file = fopen('money.csv', "r");
+      $file = fopen('visa.csv', 'r');
       
       if($file !== false) {
         while ($data = fgetcsv($file, 0, ",")) {
@@ -31,18 +31,16 @@
         exit;
       }
       
-      echo 'is it ok';
-      if(isset($list)) {
-          foreach($list as $item) {
-            if($item[0] >= $dataFrom && $item[0] <= $dataTo) {
-              $totalPrice += $item[1];
-            }
+      foreach($list as $key => $value) {
+        
+        foreach($value as $k => $v) {
+          if($v === $country) {
+            echo "<h2>$v: $value[4]</h2>";
+            exit;
           }
-
-        } else {
-          echo "Записи отсутствуют!";
         }
-
+        
+      }
     }
   ?>
   

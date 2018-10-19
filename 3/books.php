@@ -5,79 +5,46 @@
   <title>Учот расходов</title>
 </head>
 <body>
+ 
   <form method="post">
       <fieldset>
-          <p>Введите данные о покупке</p>
-              <input type="date" name="date-add">
-              <input type="number" name="price" step="0.01" placeholder="сумма в формате 256.55">
-              <input type="text" name="description" placeholder="описание">
-              <input type="submit" name="add" value="Внести данные">   
+          <p>Книга</p>
+              <input type="text" name="book" required>
+              <input type="submit" name="getBook" value="Получить">
       </fieldset>
   </form>
   
   <?php
-    if(isset($_POST['add'])) {
-      if( empty($_POST['date-add']) || empty($_POST['price']) || empty($_POST['description']) ) {
-        echo 'Заполните все поля формы!';
-      } else {
+    if(isset($_POST['getBook'])) {
 
-        $result[] = $_POST['date-add'];
-        $result[] = trim($_POST['price']);
-        $result[] = trim($_POST['description']);
-
-        $file = fopen('money.csv', 'ab');
-        
-        if($file !== false) {
-          fputcsv($file, $result);
-          echo '<h3>Новая записи добавлена успешно!</h3>';
-        }
+      $country = $_POST['book'];
       
-        fclose($file);
-      }
-    }
-  ?>
-  
-<!-- get sum -->
-  <form method="post">
-      <fieldset>
-          <p>Затраты дня</p>
-              <input type="date" name="date-from" required>
-              <input type="date" name="date-to" required>
-              <input type="submit" name="total-price" value="Получить затраты">
-      </fieldset>
-  </form>
-  
-  <?php
-    if(isset($_POST['total-price'])) {
-
-      $dataFrom = $_POST['date-from'];
-      $dataTo = $_POST['date-to'];
-
-      $file = fopen('money.csv', "r");
-      while ($data = fgetcsv($file, 0, ",")) {
-        $list[] = $data;
-      }
-
-      fclose($file);
-      
-      if(isset($list)) {
-        foreach($list as $item) {
-          if($item[0] >= $dataFrom && $item[0] <= $dataTo) {
-            $totalPrice += $item[1];
-          }
-        }
+        $code_str = urlencode($country);
+        $json_str = file_get_contents("https://www.googleapis.com/books/v1/volumes?q=$code_str");
+        $obj = json_decode($json_str);
         
-        if($totalPrice > 0) {
-          echo "<h4>За период с $dataFrom по $dataTo затрачено на суму $totalPrice</h4>";
+        if (json_last_error() == 'JSON_ERROR_NONE') {
+            $file = __DIR__ . '/books.csv';
+            $id = $obj->items[0]->id;
+            $title = $obj->items[0]->volumeInfo->title;
+            
+            if (!isset($obj->items[0]->volumeInfo->authors[0])){
+                $authors = 'none';
+            } else {
+                $authors = $obj->items[0]->volumeInfo->authors[0];
+            }
+            
+            $csv_str = "$id,$title,$authors\r\n";
+            if (is_writable($file)){
+                file_put_contents($file, $csv_str, FILE_APPEND);
+            } else {
+                echo 'Ошибка открытия файла для записи';
+            }
         } else {
-          echo "<h4>За период с $dataFrom по $dataTo покупки отсутствуют!</h4>";
-        }
-
-      } else {
-        echo "Записи отсутствуют!";
-      }
-      
+            echo "Ошибка, обработки JSON\r\n";
+        } 
     }
+    
   ?>
   
 </body>

@@ -5,6 +5,7 @@
   <title>Учот расходов</title>
 </head>
 <body>
+ <h1>Учот расходов</h1>
   <form method="post">
       <fieldset>
           <p>Введите данные о покупке</p>

@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Учот расходов</title>
+  <title>Поиск книг</title>
 </head>
 <body>
  
   <form method="post">
       <fieldset>
-          <p>Книга</p>
+          <p>Поиск книг</p>
               <input type="text" name="book" required>
               <input type="submit" name="getBook" value="Получить">
       </fieldset>

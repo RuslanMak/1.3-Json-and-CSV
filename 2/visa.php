@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Учот расходов</title>
+  <title>Страны и режим въезда</title>
 </head>
 <body>
- 
+ <h1>Страны и режим въезда</h1>
   <form method="post">
       <fieldset>
           <p>Выберите страну</p>
